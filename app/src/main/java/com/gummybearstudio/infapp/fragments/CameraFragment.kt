@@ -21,6 +21,7 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.core.content.ContextCompat
 import com.gummybearstudio.infapp.R
+import com.gummybearstudio.infapp.backend.DetectedObject
 import com.gummybearstudio.infapp.backend.ObjectDetectionHandler
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -28,19 +29,17 @@ import java.util.concurrent.Executors
 class CameraFragment : Fragment(), ObjectDetectionHandler.ResultListener {
 
     companion object {
-        private const val TAG = "Image Classifier"
+        private const val TAG = "Object Detection"
     }
 
     private var _fragmentCameraBinding: FragmentCameraBinding? = null
     private val fragmentCameraBinding
         get() = _fragmentCameraBinding!!
 
-    private lateinit var imageClassifierHelper: ImageClassifierHelper
+    private lateinit var objectDetectionHandler: ObjectDetectionHandler
     private lateinit var bitmapBuffer: Bitmap
     private val classificationResultsAdapter by lazy {
-        ClassificationResultsAdapter().apply {
-            updateAdapterSize(imageClassifierHelper.maxResults)
-        }
+        ClassificationResultsAdapter()
     }
     private var preview: Preview? = null
     private var imageAnalyzer: ImageAnalysis? = null
@@ -320,7 +319,7 @@ class CameraFragment : Fragment(), ObjectDetectionHandler.ResultListener {
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onResults(
-        results: List<Classifications>?,
+        results: List<DetectedObject>?,
         inferenceTime: Long
     ) {
         activity?.runOnUiThread {
