@@ -1,0 +1,11 @@
+Example repository:
+https://github.com/tensorflow/examples/blob/master/lite/examples/image_classification/android/app/src/main/java/org/tensorflow/lite/examples/imageclassification/ImageClassifierHelper.kt
+
+LiteRT overview
+https://ai.google.dev/edge/litert
+
+LiteRT for Android
+https://ai.google.dev/edge/litert/android
+
+Sample model mobile-object-localizer-v1
+https://www.kaggle.com/models/google/mobile-object-localizer-v1
