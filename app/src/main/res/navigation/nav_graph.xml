@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph.xml"
+    app:startDestination="@id/permissions_view">
+
+    <fragment
+        android:id="@+id/permissions_view"
+        android:name="com.gummybearstudio.infapp.fragments.PermissionsFragment"
+        android:label="PermissionsFragment">
+
+        <action
+            android:id="@+id/action_permissions_to_camera"
+            app:destination="@id/camera_view"
+            app:popUpTo="@id/permissions_view"
+            app:popUpToInclusive="true" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/camera_view"
+        android:name="com.gummybearstudio.infapp.fragments.CameraFragment"
+        android:label="CameraFragment">
+
+        <action
+            android:id="@+id/action_camera_to_permissions"
+            app:destination="@id/permissions_view"
+            app:popUpTo="@id/camera_view"
+            app:popUpToInclusive="true" />
+
+    </fragment>
+
+</navigation>

@@ -8,18 +8,20 @@ import org.tensorflow.lite.support.image.TensorImage
 import java.nio.ByteBuffer
 
 class ObjectDetectionHandler(
-    context: android.content.Context,
-    listeners: List<ResultListener>) {
+    context: android.content.Context) {
 
     private var context: android.content.Context
-    private var listeners: List<ResultListener>
+    private var listeners: MutableList<ResultListener> = mutableListOf()
 
     init {
         this.context = context
-        this.listeners = listeners
     }
 
     private var model: MobileObjectLocalizerV1? = null
+
+    fun addListener(listener: ResultListener) {
+        this.listeners.add(listener)
+    }
 
     fun runInference(input: Bitmap): MobileObjectLocalizerV1.Outputs {
         val outputs = this.model!!.process(preprocessInput(input))

@@ -1,7 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    id("androidx.navigation.safeargs.kotlin")
+    id("androidx.navigation.safeargs")
 }
 
 android {
@@ -65,11 +65,11 @@ android {
 
 dependencies {
     // Navigation
-    val navversion = "2.8.0"
-    implementation("androidx.navigation:navigation-compose:$navversion")
-    implementation("androidx.navigation:navigation-fragment:$navversion")
-    implementation("androidx.navigation:navigation-ui:$navversion")
-    implementation("androidx.navigation:navigation-dynamic-features-fragment:$navversion")
+    val navVersion = "2.5.0"
+    implementation("androidx.navigation:navigation-compose:$navVersion")
+    implementation("androidx.navigation:navigation-fragment:$navVersion")
+    implementation("androidx.navigation:navigation-ui:$navVersion")
+    implementation("androidx.navigation:navigation-dynamic-features-fragment:$navVersion")
     // LiteRT
     //implementation("com.google.ai.edge.litert:+")
     //implementation("com.google.ai.edge.litert:litert-support:+")
@@ -107,7 +107,7 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
-    androidTestImplementation("androidx.navigation:navigation-testing:$navversion")
+    //androidTestImplementation("androidx.navigation:navigation-testing:$navVersion")
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 }

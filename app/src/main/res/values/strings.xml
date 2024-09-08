@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name">My Application</string>
+    <string name="app_name">TFLite Demo App</string>
+    <string name="granted">Permission granted</string>
+    <string name="denied">Permission denied</string>
 </resources>

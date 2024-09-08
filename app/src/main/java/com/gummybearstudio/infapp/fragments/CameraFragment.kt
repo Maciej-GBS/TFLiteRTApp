@@ -1,13 +1,10 @@
 package com.gummybearstudio.infapp.fragments
 
-import android.annotation.SuppressLint
 import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.os.Bundle
-import android.util.DisplayMetrics
 import android.util.Log
 import android.view.*
-import android.widget.AdapterView
 import android.widget.Toast
 import androidx.camera.core.AspectRatio
 import androidx.camera.core.ImageProxy
@@ -18,9 +15,9 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.core.content.ContextCompat
 import com.gummybearstudio.infapp.R
+import com.gummybearstudio.infapp.databinding.CameraScreenBinding
 import com.gummybearstudio.infapp.backend.DetectedObject
 import com.gummybearstudio.infapp.backend.ObjectDetectionHandler
 import java.util.concurrent.ExecutorService
@@ -28,19 +25,12 @@ import java.util.concurrent.Executors
 
 class CameraFragment : Fragment(), ObjectDetectionHandler.ResultListener {
 
-    companion object {
-        private const val TAG = "Object Detection"
-    }
+    private var _camBinding: CameraScreenBinding? = null
+    private val camBinding
+        get() = _camBinding!!
 
-    private var _fragmentCameraBinding: FragmentCameraBinding? = null
-    private val fragmentCameraBinding
-        get() = _fragmentCameraBinding!!
-
-    private lateinit var objectDetectionHandler: ObjectDetectionHandler
+    private lateinit var detectionHandler: ObjectDetectionHandler
     private lateinit var bitmapBuffer: Bitmap
-    private val classificationResultsAdapter by lazy {
-        ClassificationResultsAdapter()
-    }
     private var preview: Preview? = null
     private var imageAnalyzer: ImageAnalysis? = null
     private var camera: Camera? = null
@@ -51,18 +41,15 @@ class CameraFragment : Fragment(), ObjectDetectionHandler.ResultListener {
 
     override fun onResume() {
         super.onResume()
-
         if (!PermissionsFragment.hasPermissions(requireContext())) {
-            Navigation.findNavController(requireActivity(), R.id.fragment_container)
+            Navigation.findNavController(requireActivity(), R.id.navigatorContainer)
                 .navigate(CameraFragmentDirections.actionCameraToPermissions())
         }
     }
 
     override fun onDestroyView() {
-        _fragmentCameraBinding = null
+        _camBinding = null
         super.onDestroyView()
-
-        // Shut down our background executor
         cameraExecutor.shutdown()
     }
 
@@ -71,32 +58,21 @@ class CameraFragment : Fragment(), ObjectDetectionHandler.ResultListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _fragmentCameraBinding = FragmentCameraBinding.inflate(inflater, container, false)
-
-        return fragmentCameraBinding.root
+        _camBinding = CameraScreenBinding.inflate(inflater, container, false)
+        return camBinding.root
     }
 
-    @SuppressLint("MissingPermission")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        imageClassifierHelper =
-            ImageClassifierHelper(context = requireContext(), imageClassifierListener = this)
-
-        with(fragmentCameraBinding.recyclerviewResults) {
-            layoutManager = LinearLayoutManager(requireContext())
-            adapter = classificationResultsAdapter
+        detectionHandler = ObjectDetectionHandler(requireContext()).also {
+            it.addListener(this)
         }
-
         cameraExecutor = Executors.newSingleThreadExecutor()
 
-        fragmentCameraBinding.viewFinder.post {
-            // Set up the camera and its use cases
+        camBinding.cameraViewFinder.post {
             setUpCamera()
         }
-
-        // Attach listeners to UI control widgets
-        initBottomSheetControls()
     }
 
     // Initialize CameraX, and prepare to bind the camera use cases
@@ -114,121 +90,13 @@ class CameraFragment : Fragment(), ObjectDetectionHandler.ResultListener {
         )
     }
 
-    private fun initBottomSheetControls() {
-        // When clicked, lower classification score threshold floor
-        fragmentCameraBinding.bottomSheetLayout.thresholdMinus.setOnClickListener {
-            if (imageClassifierHelper.threshold >= 0.1) {
-                imageClassifierHelper.threshold -= 0.1f
-                updateControlsUi()
-            }
-        }
-
-        // When clicked, raise classification score threshold floor
-        fragmentCameraBinding.bottomSheetLayout.thresholdPlus.setOnClickListener {
-            if (imageClassifierHelper.threshold < 0.9) {
-                imageClassifierHelper.threshold += 0.1f
-                updateControlsUi()
-            }
-        }
-
-        // When clicked, reduce the number of objects that can be classified at a time
-        fragmentCameraBinding.bottomSheetLayout.maxResultsMinus.setOnClickListener {
-            if (imageClassifierHelper.maxResults > 1) {
-                imageClassifierHelper.maxResults--
-                updateControlsUi()
-                classificationResultsAdapter.updateAdapterSize(size = imageClassifierHelper.maxResults)
-            }
-        }
-
-        // When clicked, increase the number of objects that can be classified at a time
-        fragmentCameraBinding.bottomSheetLayout.maxResultsPlus.setOnClickListener {
-            if (imageClassifierHelper.maxResults < 3) {
-                imageClassifierHelper.maxResults++
-                updateControlsUi()
-                classificationResultsAdapter.updateAdapterSize(size = imageClassifierHelper.maxResults)
-            }
-        }
-
-        // When clicked, decrease the number of threads used for classification
-        fragmentCameraBinding.bottomSheetLayout.threadsMinus.setOnClickListener {
-            if (imageClassifierHelper.numThreads > 1) {
-                imageClassifierHelper.numThreads--
-                updateControlsUi()
-            }
-        }
-
-        // When clicked, increase the number of threads used for classification
-        fragmentCameraBinding.bottomSheetLayout.threadsPlus.setOnClickListener {
-            if (imageClassifierHelper.numThreads < 4) {
-                imageClassifierHelper.numThreads++
-                updateControlsUi()
-            }
-        }
-
-        // When clicked, change the underlying hardware used for inference. Current options are CPU
-        // GPU, and NNAPI
-        fragmentCameraBinding.bottomSheetLayout.spinnerDelegate.setSelection(0, false)
-        fragmentCameraBinding.bottomSheetLayout.spinnerDelegate.onItemSelectedListener =
-            object : AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(
-                    parent: AdapterView<*>?,
-                    view: View?,
-                    position: Int,
-                    id: Long
-                ) {
-                    imageClassifierHelper.currentDelegate = position
-                    updateControlsUi()
-                }
-
-                override fun onNothingSelected(parent: AdapterView<*>?) {
-                    /* no op */
-                }
-            }
-
-        // When clicked, change the underlying model used for object classification
-        fragmentCameraBinding.bottomSheetLayout.spinnerModel.setSelection(0, false)
-        fragmentCameraBinding.bottomSheetLayout.spinnerModel.onItemSelectedListener =
-            object : AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(
-                    parent: AdapterView<*>?,
-                    view: View?,
-                    position: Int,
-                    id: Long
-                ) {
-                    imageClassifierHelper.currentModel = position
-                    updateControlsUi()
-                }
-
-                override fun onNothingSelected(parent: AdapterView<*>?) {
-                    /* no op */
-                }
-            }
-    }
-
-    // Update the values displayed in the bottom sheet. Reset classifier.
-    private fun updateControlsUi() {
-        fragmentCameraBinding.bottomSheetLayout.maxResultsValue.text =
-            imageClassifierHelper.maxResults.toString()
-
-        fragmentCameraBinding.bottomSheetLayout.thresholdValue.text =
-            String.format("%.2f", imageClassifierHelper.threshold)
-        fragmentCameraBinding.bottomSheetLayout.threadsValue.text =
-            imageClassifierHelper.numThreads.toString()
-        // Needs to be cleared instead of reinitialized because the GPU
-        // delegate needs to be initialized on the thread using it when applicable
-        imageClassifierHelper.clearImageClassifier()
-    }
-
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        imageAnalyzer?.targetRotation = fragmentCameraBinding.viewFinder.display.rotation
+        imageAnalyzer?.targetRotation = camBinding.cameraViewFinder.display.rotation
     }
 
     // Declare and bind preview, capture and analysis use cases
-    @SuppressLint("UnsafeOptInUsageError")
     private fun bindCameraUseCases() {
-
-        // CameraProvider
         val cameraProvider =
             cameraProvider ?: throw IllegalStateException("Camera initialization failed.")
 
@@ -240,14 +108,14 @@ class CameraFragment : Fragment(), ObjectDetectionHandler.ResultListener {
         preview =
             Preview.Builder()
                 .setTargetAspectRatio(AspectRatio.RATIO_4_3)
-                .setTargetRotation(fragmentCameraBinding.viewFinder.display.rotation)
+                .setTargetRotation(camBinding.cameraViewFinder.display.rotation)
                 .build()
 
         // ImageAnalysis. Using RGBA 8888 to match how our models work
         imageAnalyzer =
             ImageAnalysis.Builder()
                 .setTargetAspectRatio(AspectRatio.RATIO_4_3)
-                .setTargetRotation(fragmentCameraBinding.viewFinder.display.rotation)
+                .setTargetRotation(camBinding.cameraViewFinder.display.rotation)
                 .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                 .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_RGBA_8888)
                 .build()
@@ -264,7 +132,7 @@ class CameraFragment : Fragment(), ObjectDetectionHandler.ResultListener {
                             )
                         }
 
-                        classifyImage(image)
+                        infer(image)
                     }
                 }
 
@@ -277,57 +145,29 @@ class CameraFragment : Fragment(), ObjectDetectionHandler.ResultListener {
             camera = cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageAnalyzer)
 
             // Attach the viewfinder's surface provider to preview use case
-            preview?.setSurfaceProvider(fragmentCameraBinding.viewFinder.surfaceProvider)
+            preview?.setSurfaceProvider(camBinding.cameraViewFinder.surfaceProvider)
         } catch (exc: Exception) {
-            Log.e(TAG, "Use case binding failed", exc)
+            Log.e("CameraFragment", "Use case binding failed", exc)
         }
     }
 
-    private fun getScreenOrientation() : Int {
-        val outMetrics = DisplayMetrics()
-
-        val display: Display?
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
-            display = requireActivity().display
-            display?.getRealMetrics(outMetrics)
-        } else {
-            @Suppress("DEPRECATION")
-            display = requireActivity().windowManager.defaultDisplay
-            @Suppress("DEPRECATION")
-            display.getMetrics(outMetrics)
-        }
-
-        return display?.rotation ?: 0
-    }
-
-    private fun classifyImage(image: ImageProxy) {
-        // Copy out RGB bits to the shared bitmap buffer
+    private fun infer(image: ImageProxy) {
         image.use { bitmapBuffer.copyPixelsFromBuffer(image.planes[0].buffer) }
-
-        // Pass Bitmap and rotation to the image classifier helper for processing and classification
-        imageClassifierHelper.classify(bitmapBuffer, getScreenOrientation())
+        detectionHandler.runInference(bitmapBuffer)
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     override fun onError(error: String) {
         activity?.runOnUiThread {
             Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show()
-            classificationResultsAdapter.updateResults(null)
-            classificationResultsAdapter.notifyDataSetChanged()
         }
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     override fun onResults(
         results: List<DetectedObject>?,
         inferenceTime: Long
     ) {
         activity?.runOnUiThread {
-            // Show result on bottom sheet
-            classificationResultsAdapter.updateResults(results)
-            classificationResultsAdapter.notifyDataSetChanged()
-            fragmentCameraBinding.bottomSheetLayout.inferenceTimeVal.text =
-                String.format("%d ms", inferenceTime)
+            // TODO
         }
     }
 }
