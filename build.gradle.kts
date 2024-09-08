@@ -2,4 +2,6 @@
 plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.kotlin.android) apply false
+    // Navigation SafeArgs PermissionDirections helper
+    id("androidx.navigation.safeargs.kotlin") version "2.8.0" apply false
 }

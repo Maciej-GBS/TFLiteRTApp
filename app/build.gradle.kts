@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    id("androidx.navigation.safeargs.kotlin")
 }
 
 android {
@@ -47,6 +48,10 @@ android {
     buildFeatures {
         compose = true
         mlModelBinding = true
+        viewBinding = true
+    }
+    androidResources {
+        noCompress += setOf("tflite")
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
@@ -59,11 +64,19 @@ android {
 }
 
 dependencies {
+    // Navigation
+    val navversion = "2.8.0"
+    implementation("androidx.navigation:navigation-compose:$navversion")
+    implementation("androidx.navigation:navigation-fragment:$navversion")
+    implementation("androidx.navigation:navigation-ui:$navversion")
+    implementation("androidx.navigation:navigation-dynamic-features-fragment:$navversion")
+    // LiteRT
     //implementation("com.google.ai.edge.litert:+")
     //implementation("com.google.ai.edge.litert:litert-support:+")
     //implementation("com.google.mediapipe:tasks-vision:latest.release")
     //implementation("com.google.mediapipe:tasks-text:latest.release")
     //implementation("com.google.mediapipe:tasks-audio:latest.release")
+    // Default
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -72,9 +85,11 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    // TensorFlow Lite
     implementation(libs.tensorflow.lite.support)
     implementation(libs.tensorflow.lite.metadata)
     implementation(libs.tensorflow.lite.gpu)
+    // Camera
     implementation(libs.androidx.camera.core)
     implementation(libs.androidx.camera.lifecycle)
     implementation(libs.androidx.fragment.ktx)
@@ -85,11 +100,14 @@ dependencies {
     implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.material)
+    implementation(libs.androidx.camera.view)
+    // Tests
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
+    androidTestImplementation("androidx.navigation:navigation-testing:$navversion")
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 }
