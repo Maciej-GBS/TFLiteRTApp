@@ -1,47 +1,26 @@
 package com.gummybearstudio.infapp
 
+import android.os.Build
 import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.gummybearstudio.infapp.ui.theme.MyApplicationTheme
+import androidx.appcompat.app.AppCompatActivity
+import com.gummybearstudio.infapp.databinding.RootActivityBinding
 
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
+    private lateinit var activityMainBinding: RootActivityBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            MyApplicationTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "TFLite Demo ready",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
-            }
-        }
+        activityMainBinding = RootActivityBinding.inflate(layoutInflater)
+        setContentView(activityMainBinding.root)
     }
-}
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "$name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    MyApplicationTheme {
-        Greeting("TFLite Demo")
+    override fun onBackPressed() {
+        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
+            // Workaround for Android Q memory leak issue in IRequestFinishCallback$Stub.
+            // (https://issuetracker.google.com/issues/139738913)
+            finishAfterTransition()
+        } else {
+            super.onBackPressed()
+        }
     }
 }

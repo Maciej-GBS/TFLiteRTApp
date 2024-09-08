@@ -45,11 +45,11 @@ class PermissionsFragment : Fragment() {
     }
 
     private fun navigateToCamera() {
-        lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED,) {
+        lifecycleScope.launchWhenStarted {
+            //viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 Navigation.findNavController(requireActivity(), R.id.navigatorContainer).navigate(
                     PermissionsFragmentDirections.actionPermissionsToCamera())
-            }
+            //}
         }
     }
 

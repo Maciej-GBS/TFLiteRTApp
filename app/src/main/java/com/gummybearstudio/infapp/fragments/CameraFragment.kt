@@ -50,6 +50,7 @@ class CameraFragment : Fragment(), ObjectDetectionHandler.ResultListener {
     override fun onDestroyView() {
         _camBinding = null
         super.onDestroyView()
+        detectionHandler.closeInference()
         cameraExecutor.shutdown()
     }
 
@@ -67,6 +68,7 @@ class CameraFragment : Fragment(), ObjectDetectionHandler.ResultListener {
 
         detectionHandler = ObjectDetectionHandler(requireContext()).also {
             it.addListener(this)
+            it.prepareInference()
         }
         cameraExecutor = Executors.newSingleThreadExecutor()
 
