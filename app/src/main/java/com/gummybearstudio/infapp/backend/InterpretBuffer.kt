@@ -2,9 +2,15 @@ package com.gummybearstudio.infapp.backend
 
 import java.nio.ByteBuffer
 
-object IntepretBuffer {
+object InterpretBuffer {
     fun intFromBytes(bytes: ByteBuffer): Int {
        return bytes.getInt(0)
+    }
+
+    fun intListFromBytes(bytes: ByteBuffer): List<Int> {
+        return List(bytes.capacity() / INT_SIZE) { index: Int ->
+            bytes.getInt(index)
+        }
     }
 
     fun floatFromBytes(bytes: ByteBuffer): Float {
@@ -18,4 +24,5 @@ object IntepretBuffer {
     }
 
     private const val FLOAT_SIZE = 4
+    private const val INT_SIZE = 4
 }
