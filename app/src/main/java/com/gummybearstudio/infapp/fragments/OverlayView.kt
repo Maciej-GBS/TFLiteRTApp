@@ -11,12 +11,11 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import com.gummybearstudio.infapp.R
 import com.gummybearstudio.infapp.backend.DetectedObject
-import java.util.LinkedList
 import kotlin.math.max
 
 class OverlayView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
-    private var results: List<DetectedObject> = LinkedList<DetectedObject>()
+    private var results: List<DetectedObject> = listOf()
     private var boxPaint = Paint()
     private var textBackgroundPaint = Paint()
     private var textPaint = Paint()
@@ -83,7 +82,7 @@ class OverlayView(context: Context?, attrs: AttributeSet?) : View(context, attrs
     }
 
     fun setResults(
-        detectionResults: MutableList<DetectedObject>,
+        detectionResults: List<DetectedObject>,
         imageHeight: Int,
         imageWidth: Int,
     ) {

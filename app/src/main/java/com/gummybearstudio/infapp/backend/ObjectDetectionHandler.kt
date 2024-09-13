@@ -1,5 +1,6 @@
 package com.gummybearstudio.infapp.backend
 import android.graphics.Bitmap
+import android.util.Log
 import androidx.core.graphics.scale
 import com.gummybearstudio.infapp.ml.MobileObjectLocalizerV1
 import org.tensorflow.lite.support.tensorbuffer.TensorBuffer
@@ -29,7 +30,7 @@ class ObjectDetectionHandler(
             this.model!!.process(preprocessInput(input))
         }
         listeners.forEach {
-            it.onResults(postprocessOutput(outputs), timeMs)
+            it.onResults(postprocessOutput(outputs), timeMs, HEIGHT, WIDTH)
         }
         return outputs
     }
@@ -44,10 +45,15 @@ class ObjectDetectionHandler(
     }
 
     private fun postprocessOutput(outputs: MobileObjectLocalizerV1.Outputs): List<DetectedObject> {
-        val n = InterpretBuffer.intFromBytes(outputs.outputFeature0AsTensorBuffer.buffer)
+        val n = outputs.outputFeature3AsTensorBuffer.getIntValue(0)
+        if (n > 100) {
+            Log.e("ObjectDetectionHandler", "Failure in output parsing n=$n")
+            return listOf()
+        }
+        Log.d("ObjectDetectionHandler", "Returning n=$n")
         return List(n) { _ ->
-            val box = InterpretBuffer.intListFromBytes(outputs.outputFeature1AsTensorBuffer.buffer)
-            val score = InterpretBuffer.floatFromBytes(outputs.outputFeature2AsTensorBuffer.buffer)
+            val box = outputs.outputFeature0AsTensorBuffer.intArray.asList()
+            val score = outputs.outputFeature2AsTensorBuffer.getFloatValue(0)
             DetectedObject(SuperpixelBox(box), score, ENTITY_CLASS)
         }
     }
@@ -76,7 +82,9 @@ class ObjectDetectionHandler(
         fun onError(error: String)
         fun onResults(
             results: List<DetectedObject>?,
-            inferenceTime: Long
+            inferenceTime: Long,
+            imageHeight: Int,
+            imageWidth: Int
         )
     }
 
