@@ -1,19 +1,33 @@
 package com.gummybearstudio.infapp.backend
 
-class SuperpixelBox(topPixel: Int, leftPixel: Int, bottomPixel: Int, rightPixel: Int) {
-    private val _topPixel = topPixel
-    private val _leftPixel = leftPixel
-    private val _bottomPixel = bottomPixel
-    private val _rightPixel = rightPixel
+class SuperpixelBox(topPos: Float, leftPos: Float, bottomPos: Float, rightPos: Float) {
+    private val _topPos = topPos
+    private val _leftPos = leftPos
+    private val _bottomPos = bottomPos
+    private val _rightPos = rightPos
 
-    val topPixel
-        get() = _topPixel
-    val leftPixel
-        get() = _leftPixel
-    val bottomPixel
-        get() = _bottomPixel
-    val rightPixel
-        get() = _rightPixel
+    val topPos
+        get() = _topPos
+    val leftPos
+        get() = _leftPos
+    val bottomPos
+        get() = _bottomPos
+    val rightPos
+        get() = _rightPos
 
-    constructor(pixels: List<Int>) : this(pixels[0], pixels[1], pixels[2], pixels[3])
+    constructor(pixels: List<Float>) : this(pixels[0], pixels[1], pixels[2], pixels[3])
+
+    fun project(width: Float, height: Float) = SuperpixelBox(
+        _topPos * height,
+        _leftPos * width,
+        _bottomPos * height,
+        _rightPos * width)
+
+    fun isProjected(): Boolean {
+        return topPos > 1f || leftPos > 1f || bottomPos > 1f || rightPos > 1f
+    }
+
+    override fun toString(): String {
+        return "SBox{$topPos, $leftPos, $bottomPos, $rightPos}"
+    }
 }

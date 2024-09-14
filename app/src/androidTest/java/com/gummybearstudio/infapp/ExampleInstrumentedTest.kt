@@ -1,10 +1,11 @@
 package com.gummybearstudio.infapp
 
 import android.graphics.Bitmap
-import android.graphics.Color
+import android.util.Log
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.gummybearstudio.infapp.backend.ObjectDetectionHandler
+import com.gummybearstudio.infapp.backend.OutputInterpreter
 import kotlin.random.Random
 
 import org.junit.Test
@@ -40,7 +41,13 @@ class ExampleInstrumentedTest {
         }
 
         testObj.prepareInference()
-        testObj.runInference(testInput)
+        val outputs = testObj.runInference(testInput)
         testObj.closeInference()
+
+        val parsedOutput = OutputInterpreter.toDetectedObjects(outputs)
+        Log.d("ExampleInstrumentedTest", parsedOutput.toString())
+        parsedOutput.forEach { e ->
+            assertFalse(e.box.isProjected())
+        }
     }
 }

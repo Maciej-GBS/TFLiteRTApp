@@ -7,6 +7,7 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.RectF
 import android.util.AttributeSet
+import android.util.Log
 import android.view.View
 import androidx.core.content.ContextCompat
 import com.gummybearstudio.infapp.R
@@ -20,15 +21,13 @@ class OverlayView(context: Context?, attrs: AttributeSet?) : View(context, attrs
     private var textBackgroundPaint = Paint()
     private var textPaint = Paint()
 
-    private var scaleFactor: Float = 1f
-
     private var bounds = Rect()
 
     init {
         initPaints()
     }
 
-    fun clear() {
+    private fun clear() {
         textPaint.reset()
         textBackgroundPaint.reset()
         boxPaint.reset()
@@ -54,14 +53,8 @@ class OverlayView(context: Context?, attrs: AttributeSet?) : View(context, attrs
         super.draw(canvas)
 
         for (result in results) {
-            val boundingBox = result.box
-
-            val top = boundingBox.topPixel * scaleFactor
-            val bottom = boundingBox.bottomPixel * scaleFactor
-            val left = boundingBox.leftPixel * scaleFactor
-            val right = boundingBox.rightPixel * scaleFactor
-
-            val drawableRect = RectF(left, top, right, bottom)
+            val bBox = result.box.project(width * 1f, height * 1f)
+            val drawableRect = RectF(bBox.leftPos, bBox.topPos, bBox.rightPos, bBox.bottomPos)
             canvas.drawRect(drawableRect, boxPaint)
 
             val drawableText = result.classId.toString() + " " + String.format("%.2f", result.score)
@@ -70,14 +63,14 @@ class OverlayView(context: Context?, attrs: AttributeSet?) : View(context, attrs
             val textWidth = bounds.width()
             val textHeight = bounds.height()
             canvas.drawRect(
-                left,
-                top,
-                left + textWidth + Companion.BOUNDING_RECT_TEXT_PADDING,
-                top + textHeight + Companion.BOUNDING_RECT_TEXT_PADDING,
+                bBox.leftPos,
+                bBox.topPos,
+                bBox.leftPos + textWidth + BOUNDING_RECT_TEXT_PADDING,
+                bBox.topPos + textHeight + BOUNDING_RECT_TEXT_PADDING,
                 textBackgroundPaint
             )
 
-            canvas.drawText(drawableText, left, top + bounds.height(), textPaint)
+            canvas.drawText(drawableText, bBox.leftPos, bBox.topPos + bounds.height(), textPaint)
         }
     }
 
@@ -87,10 +80,9 @@ class OverlayView(context: Context?, attrs: AttributeSet?) : View(context, attrs
         imageWidth: Int,
     ) {
         results = detectionResults
-
         // PreviewView is in FILL_START mode. So we need to scale up the bounding box to match with
         // the size that the captured images will be displayed.
-        scaleFactor = max(width * 1f / imageWidth, height * 1f / imageHeight)
+        clear()
     }
 
     companion object {

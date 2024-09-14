@@ -14,4 +14,9 @@ class DetectedObject(detectionBox: SuperpixelBox,
         get() = _score
     val classId
         get() = _classId
+
+    override fun toString(): String {
+        val boxStr = box.toString()
+        return "DetectedObject(box=$boxStr, score=$score, classId=$classId)"
+    }
 }
