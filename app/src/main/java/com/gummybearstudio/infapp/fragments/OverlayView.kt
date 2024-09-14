@@ -52,7 +52,10 @@ class OverlayView(context: Context?, attrs: AttributeSet?) : View(context, attrs
 
         for (result in results) {
             val bBox = result.box.project(width * 1f, height * 1f)
-            val drawableRect = RectF(bBox.leftPos, bBox.topPos, bBox.rightPos, bBox.bottomPos)
+            val drawableRect = RectF(bBox.left, bBox.top, bBox.right, bBox.bottom)
+            if (drawableRect.left > drawableRect.right || drawableRect.top > drawableRect.bottom) {
+                throw IllegalStateException("Invalid bounding box: $bBox")
+            }
             canvas.drawRect(drawableRect, boxPaint)
 
             val drawableText = result.classId.toString() + " " + String.format("%.2f", result.score)
@@ -61,14 +64,14 @@ class OverlayView(context: Context?, attrs: AttributeSet?) : View(context, attrs
             val textWidth = bounds.width()
             val textHeight = bounds.height()
             canvas.drawRect(
-                bBox.leftPos,
-                bBox.topPos,
-                bBox.leftPos + textWidth + BOUNDING_RECT_TEXT_PADDING,
-                bBox.topPos + textHeight + BOUNDING_RECT_TEXT_PADDING,
+                bBox.left,
+                bBox.top,
+                bBox.left + textWidth + BOUNDING_RECT_TEXT_PADDING,
+                bBox.top + textHeight + BOUNDING_RECT_TEXT_PADDING,
                 textBackgroundPaint
             )
 
-            canvas.drawText(drawableText, bBox.leftPos, bBox.topPos + bounds.height(), textPaint)
+            canvas.drawText(drawableText, bBox.left, bBox.top + bounds.height(), textPaint)
         }
     }
 

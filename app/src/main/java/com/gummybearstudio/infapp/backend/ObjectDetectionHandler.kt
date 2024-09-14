@@ -1,4 +1,5 @@
 package com.gummybearstudio.infapp.backend
+
 import android.graphics.Bitmap
 import androidx.core.graphics.scale
 import com.gummybearstudio.infapp.ml.MobileObjectLocalizerV1
@@ -11,12 +12,8 @@ import kotlin.system.measureTimeMillis
 class ObjectDetectionHandler(
     context: android.content.Context) {
 
-    private var context: android.content.Context
+    private var context: android.content.Context = context
     private var listeners: MutableList<ResultListener> = mutableListOf()
-
-    init {
-        this.context = context
-    }
 
     private var model: MobileObjectLocalizerV1? = null
 
@@ -77,7 +74,7 @@ class ObjectDetectionHandler(
         const val WIDTH = 192
 
         const val ENTITY_CLASS = 1
-        const val THRESHOLD = 0.2
+        const val THRESHOLD = 0.25
     }
 
 }
