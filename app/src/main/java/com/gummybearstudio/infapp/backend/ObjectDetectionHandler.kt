@@ -30,7 +30,7 @@ class ObjectDetectionHandler(
         }
         listeners.forEach {
             val allDetections = OutputInterpreter.toDetectedObjects(outputs)
-            it.onResults(allDetections.filter { e -> e.score > THRESHOLD }, timeMs, HEIGHT, WIDTH)
+            it.onResults(allDetections.filter { e -> e.score > THRESHOLD }, timeMs)
         }
         return outputs
     }
@@ -68,9 +68,7 @@ class ObjectDetectionHandler(
         fun onError(error: String)
         fun onResults(
             results: List<DetectedObject>?,
-            inferenceTime: Long,
-            imageHeight: Int,
-            imageWidth: Int
+            inferenceTime: Long
         )
     }
 

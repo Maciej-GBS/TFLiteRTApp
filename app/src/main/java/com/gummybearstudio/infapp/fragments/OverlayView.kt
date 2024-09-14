@@ -7,12 +7,10 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.RectF
 import android.util.AttributeSet
-import android.util.Log
 import android.view.View
 import androidx.core.content.ContextCompat
 import com.gummybearstudio.infapp.R
 import com.gummybearstudio.infapp.backend.DetectedObject
-import kotlin.math.max
 
 class OverlayView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
@@ -75,9 +73,7 @@ class OverlayView(context: Context?, attrs: AttributeSet?) : View(context, attrs
     }
 
     fun setResults(
-        detectionResults: List<DetectedObject>,
-        imageHeight: Int,
-        imageWidth: Int,
+        detectionResults: List<DetectedObject>
     ) {
         results = detectionResults
         // PreviewView is in FILL_START mode. So we need to scale up the bounding box to match with

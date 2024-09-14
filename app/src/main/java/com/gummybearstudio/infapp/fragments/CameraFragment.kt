@@ -166,15 +166,11 @@ class CameraFragment : Fragment(), ObjectDetectionHandler.ResultListener {
 
     override fun onResults(
         results: List<DetectedObject>?,
-        inferenceTime: Long,
-        imageHeight: Int,
-        imageWidth: Int
+        inferenceTime: Long
     ) {
         activity?.runOnUiThread {
             camBinding.overlay.setResults(
-                results ?: listOf(),
-                imageHeight,
-                imageWidth
+                results ?: listOf()
             )
         }
     }
