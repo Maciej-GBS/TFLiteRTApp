@@ -1,0 +1,20 @@
+PRIVACY POLICY
+This privacy policy applies to Android application published by
+GummyBearStudio under the name TFLite Model Tester (TFLiteRTApp / com.gummybearstudio.infapp).
+
+STORED INFORMATION
+This application does not store any information about the user.
+It is not transmitting any data into web servers and executes the code locally on device only.
+All the data provided to the application at runtime with user selected file or camera are discarded when the application is closed.
+
+APPLICATION PERMISSIONS
+The application requires camera access permission for it to work and may ask for selected file access to load user provided parameters.
+
+CONTACT
+Please use the e-mail provided on Google Play application details.
+
+LIMITED RESPONSIBILITY
+Downloading the application from any other source than the official GummyBearStudio developer account is your own risk.
+
+CHANGES TO THIS PRIVACY POLICY
+When the application is updated, this privacy policy may also be changed to keep it aligned with current implementation.
