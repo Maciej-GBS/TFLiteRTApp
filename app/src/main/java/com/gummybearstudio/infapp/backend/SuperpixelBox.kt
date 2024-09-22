@@ -15,7 +15,7 @@ class SuperpixelBox(top: Float, left: Float, bottom: Float, right: Float) {
     val right
         get() = _right
 
-    constructor(pixels: List<Float>) : this(pixels[0], pixels[1], pixels[2], pixels[3])
+    constructor(pixels: FloatArray) : this(pixels[0], pixels[1], pixels[2], pixels[3])
 
     fun project(width: Float, height: Float) = SuperpixelBox(
         _top * height,

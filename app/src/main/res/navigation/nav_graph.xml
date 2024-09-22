@@ -18,6 +18,19 @@
     </fragment>
 
     <fragment
+        android:id="@+id/loader_view"
+        android:name="com.gummybearstudio.infapp.fragments.LoaderFragment"
+        android:label="LoaderFragment">
+
+        <action
+            android:id="@+id/action_loader_to_camera"
+            app:destination="@id/camera_view"
+            app:popUpTo="@id/loader_view"
+            app:popUpToInclusive="true" />
+
+    </fragment>
+
+    <fragment
         android:id="@+id/camera_view"
         android:name="com.gummybearstudio.infapp.fragments.CameraFragment"
         android:label="CameraFragment">
@@ -25,6 +38,12 @@
         <action
             android:id="@+id/action_camera_to_permissions"
             app:destination="@id/permissions_view"
+            app:popUpTo="@id/camera_view"
+            app:popUpToInclusive="true" />
+
+        <action
+            android:id="@+id/action_camera_to_loader"
+            app:destination="@id/loader_view"
             app:popUpTo="@id/camera_view"
             app:popUpToInclusive="true" />
 

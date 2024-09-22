@@ -18,8 +18,7 @@ import kotlinx.coroutines.launch
 class PermissionsFragment : Fragment() {
 
     private val requestPermissionLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()
-        ) { isGranted: Boolean ->
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
             if (isGranted) {
                 Toast.makeText(context, R.string.granted, Toast.LENGTH_LONG).show()
                 navigateToCamera()

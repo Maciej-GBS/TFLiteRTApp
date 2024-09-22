@@ -30,7 +30,7 @@ class ExampleInstrumentedTest {
     @Test
     fun runInferenceRandomBitmap() {
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        val testObj = ObjectDetectionHandler(appContext)
+        val testObj = ObjectDetectionHandler()
         val testInput: Bitmap = Bitmap.createBitmap(192, 192, Bitmap.Config.ARGB_8888)
 
         for (x in 0 until testInput.width) {
@@ -40,11 +40,14 @@ class ExampleInstrumentedTest {
             }
         }
 
-        testObj.prepareInference()
+        testObj.prepareInference(
+            InstrumentedTestHelper.getRawModelAsFile(appContext, R.raw.mobile_object_localizer_v1))
         val outputs = testObj.runInference(testInput)
         testObj.closeInference()
 
-        OutputInterpreter.toDetectedObjects(outputs).forEach { e ->
+        val resultObjects = OutputInterpreter.toDetectedObjects(outputs)
+        assertEquals(100, resultObjects.size)
+        resultObjects.forEach { e ->
             Log.d("ExampleInstrumentedTest", e.toString())
         }
     }

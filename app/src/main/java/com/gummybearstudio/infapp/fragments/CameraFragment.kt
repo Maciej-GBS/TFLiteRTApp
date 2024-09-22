@@ -19,6 +19,7 @@ import androidx.core.content.ContextCompat
 import com.gummybearstudio.infapp.R
 import com.gummybearstudio.infapp.databinding.CameraScreenBinding
 import com.gummybearstudio.infapp.backend.DetectedObject
+import com.gummybearstudio.infapp.backend.ModelFileProvider
 import com.gummybearstudio.infapp.backend.ObjectDetectionHandler
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -29,8 +30,8 @@ class CameraFragment : Fragment(), ObjectDetectionHandler.ResultListener {
     private val camBinding
         get() = _camBinding!!
 
-    private lateinit var detectionHandler: ObjectDetectionHandler
     private lateinit var bitmapBuffer: Bitmap
+    private var detectionHandler: ObjectDetectionHandler? = null
     private var preview: Preview? = null
     private var imageAnalyzer: ImageAnalysis? = null
     private var camera: Camera? = null
@@ -47,10 +48,19 @@ class CameraFragment : Fragment(), ObjectDetectionHandler.ResultListener {
         }
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        if (ModelFileProvider.modelFile == null || ModelFileProvider.modelFile?.exists() == false) {
+            Log.d("CameraFragment", "Model file missing, launching open dialog...")
+            Navigation.findNavController(requireActivity(), R.id.navigatorContainer)
+                .navigate(CameraFragmentDirections.actionCameraToLoader())
+        }
+    }
+
     override fun onDestroyView() {
         _camBinding = null
         super.onDestroyView()
-        detectionHandler.closeInference()
+        detectionHandler?.closeInference()
         cameraExecutor.shutdown()
     }
 
@@ -66,10 +76,6 @@ class CameraFragment : Fragment(), ObjectDetectionHandler.ResultListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        detectionHandler = ObjectDetectionHandler(requireContext()).also {
-            it.addListener(this)
-            it.prepareInference()
-        }
         cameraExecutor = Executors.newSingleThreadExecutor()
 
         camBinding.cameraViewFinder.post {
@@ -144,7 +150,8 @@ class CameraFragment : Fragment(), ObjectDetectionHandler.ResultListener {
         try {
             // A variable number of use-cases can be passed here -
             // camera provides access to CameraControl & CameraInfo
-            camera = cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageAnalyzer)
+            camera = cameraProvider.bindToLifecycle(
+                this, cameraSelector, preview, imageAnalyzer)
 
             // Attach the viewfinder's surface provider to preview use case
             preview?.setSurfaceProvider(camBinding.cameraViewFinder.surfaceProvider)
@@ -154,8 +161,18 @@ class CameraFragment : Fragment(), ObjectDetectionHandler.ResultListener {
     }
 
     private fun infer(image: ImageProxy) {
-        image.use { bitmapBuffer.copyPixelsFromBuffer(image.planes[0].buffer) }
-        detectionHandler.runInference(bitmapBuffer)
+        if (detectionHandler == null) {
+            ModelFileProvider.modelFile?.also {
+                detectionHandler = ObjectDetectionHandler()
+                detectionHandler!!.addListener(this)
+                detectionHandler!!.prepareInference(it)
+            }
+        }
+
+        detectionHandler?.apply {
+            image.use { bitmapBuffer.copyPixelsFromBuffer(image.planes[0].buffer) }
+            runInference(bitmapBuffer)
+        }
     }
 
     override fun onError(error: String) {

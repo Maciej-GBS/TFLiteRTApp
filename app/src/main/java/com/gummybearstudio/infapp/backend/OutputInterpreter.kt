@@ -1,23 +1,30 @@
 package com.gummybearstudio.infapp.backend
 
-import com.gummybearstudio.infapp.backend.ObjectDetectionHandler.Companion.ENTITY_CLASS
-import com.gummybearstudio.infapp.ml.MobileObjectLocalizerV1.Outputs
+import android.util.Log
+import java.nio.ByteBuffer
 
 object OutputInterpreter {
-    fun toDetectedObjects(outputs: Outputs): List<DetectedObject> {
-        /*
-        0: java.nio.DirectByteBuffer[pos=1600 lim=1600 cap=1600] 400x 32bit float
-        1: java.nio.DirectByteBuffer[pos=400 lim=400 cap=400] 100x 32bit float
-        2: java.nio.DirectByteBuffer[pos=400 lim=400 cap=400] 100x 32bit float
-        3: java.nio.DirectByteBuffer[pos=4 lim=4 cap=4] - 32bit int
-         */
-        val n = outputs.outputFeature3AsTensorBuffer.getIntValue(0)
-        return List(n) { idx ->
-            val box = outputs.outputFeature0AsTensorBuffer.run {
-                List(4) { getFloatValue(idx * 4 + it) }
-            }
-            val score = outputs.outputFeature2AsTensorBuffer.getFloatValue(idx)
-            val dObj = DetectedObject(SuperpixelBox(box), score, ENTITY_CLASS)
+    private const val ENTITY_CLASS = 1
+
+    /*
+    0: java.nio.DirectByteBuffer[pos=1600 lim=1600 cap=1600] 400x 32bit float : boxes
+    1: java.nio.DirectByteBuffer[pos=400 lim=400 cap=400] 100x 32bit float : classes
+    2: java.nio.DirectByteBuffer[pos=400 lim=400 cap=400] 100x 32bit float : scores
+    3: java.nio.DirectByteBuffer[pos=4 lim=4 cap=4] - 32bit int : n of detections
+     */
+    fun toDetectedObjects(outputs: Map<Int, ByteBuffer>): List<DetectedObject> {
+        val feature0 = outputs.getValue(0).apply { rewind() }.asFloatBuffer()
+        val feature2 = outputs.getValue(2).apply { rewind() }.asFloatBuffer()
+        val feature3 = outputs.getValue(3).apply { rewind() }.asFloatBuffer()
+        Log.d("OutputInterpreter", "received outputs: $outputs")
+        val n = feature3.get().toInt()
+        Log.d("OutputInterpreter", "n objects: $n")
+        return List(n) {
+            val boxArray = FloatArray(4)
+            feature0.get(boxArray)
+            val box = SuperpixelBox(boxArray)
+            val score = feature2.get()
+            val dObj = DetectedObject(box, score, ENTITY_CLASS)
             dObj
         }
     }
