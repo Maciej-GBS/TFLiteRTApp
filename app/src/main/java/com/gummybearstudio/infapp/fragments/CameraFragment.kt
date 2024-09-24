@@ -36,6 +36,7 @@ class CameraFragment : Fragment(), ObjectDetectionHandler.ResultListener {
     private var imageAnalyzer: ImageAnalysis? = null
     private var camera: Camera? = null
     private var cameraProvider: ProcessCameraProvider? = null
+    private var cameraReady: Boolean = false
 
     /** Blocking camera operations are performed using this executor */
     private lateinit var cameraExecutor: ExecutorService
@@ -46,18 +47,18 @@ class CameraFragment : Fragment(), ObjectDetectionHandler.ResultListener {
             Navigation.findNavController(requireActivity(), R.id.navigatorContainer)
                 .navigate(CameraFragmentDirections.actionCameraToPermissions())
         }
+        if (cameraReady)
+            loadModel()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (ModelFileProvider.modelFile == null || ModelFileProvider.modelFile?.exists() == false) {
-            Log.d("CameraFragment", "Model file missing, launching open dialog...")
-            Navigation.findNavController(requireActivity(), R.id.navigatorContainer)
-                .navigate(CameraFragmentDirections.actionCameraToLoader())
-        }
+        if (cameraReady)
+            loadModel()
     }
 
     override fun onDestroyView() {
+        cameraReady = false
         _camBinding = null
         super.onDestroyView()
         detectionHandler?.closeInference()
@@ -88,11 +89,10 @@ class CameraFragment : Fragment(), ObjectDetectionHandler.ResultListener {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
         cameraProviderFuture.addListener(
             {
-                // CameraProvider
                 cameraProvider = cameraProviderFuture.get()
-
-                // Build and bind the camera use cases
                 bindCameraUseCases()
+                cameraReady = true
+                loadModel()
             },
             ContextCompat.getMainExecutor(requireContext())
         )
@@ -172,6 +172,14 @@ class CameraFragment : Fragment(), ObjectDetectionHandler.ResultListener {
         detectionHandler?.apply {
             image.use { bitmapBuffer.copyPixelsFromBuffer(image.planes[0].buffer) }
             runInference(bitmapBuffer)
+        }
+    }
+
+    private fun loadModel() {
+        if (ModelFileProvider.modelFile == null || ModelFileProvider.modelFile?.exists() == false) {
+            Log.d("CameraFragment", "Model file missing, launching open dialog...")
+            Navigation.findNavController(requireActivity(), R.id.navigatorContainer)
+                .navigate(CameraFragmentDirections.actionCameraToLoader())
         }
     }
 
