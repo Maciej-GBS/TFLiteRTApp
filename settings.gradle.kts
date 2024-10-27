@@ -19,5 +19,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "TFLite Demo App"
+rootProject.name = "TFLite Tester"
 include(":app")

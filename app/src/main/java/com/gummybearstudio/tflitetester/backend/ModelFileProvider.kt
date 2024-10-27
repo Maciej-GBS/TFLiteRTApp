@@ -91,16 +91,16 @@ object ModelFileProvider {
 
     private fun useDefaultModelAlert(context: Context, onPositive: () -> Unit, onNegative: () -> Unit) {
         val builder = AlertDialog.Builder(context)
-        builder.setTitle("Confirm")
-        builder.setMessage("Would you like to load a custom .tflite model?")
+        builder.setTitle(R.string.model_selection_title)
+        builder.setMessage(R.string.model_selection_prompt)
 
-        builder.setPositiveButton("Yes") { _, _ ->
-            Toast.makeText(context, "Select model", Toast.LENGTH_SHORT).show()
+        builder.setPositiveButton(R.string.model_selection_ok) { _, _ ->
+            Toast.makeText(context, R.string.model_selection_ok_toast, Toast.LENGTH_SHORT).show()
             onPositive()
         }
 
-        builder.setNegativeButton("Use default") { _, _ ->
-            Toast.makeText(context, "Loading default", Toast.LENGTH_SHORT).show()
+        builder.setNegativeButton(R.string.model_selection_no) { _, _ ->
+            Toast.makeText(context, R.string.model_selection_no_toast, Toast.LENGTH_SHORT).show()
             onNegative()
         }
 
