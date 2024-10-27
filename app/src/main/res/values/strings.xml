@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">TFLite Model Tester</string>
+    <string name="app_name">TFLite Tester</string>
     <string name="granted">Permission granted</string>
     <string name="denied">Permission denied</string>
 </resources>
