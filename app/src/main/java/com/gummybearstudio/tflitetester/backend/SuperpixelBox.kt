@@ -1,4 +1,4 @@
-package com.gummybearstudio.infapp.backend
+package com.gummybearstudio.tflitetester.backend
 
 class SuperpixelBox(top: Float, left: Float, bottom: Float, right: Float) {
     private val _top = top

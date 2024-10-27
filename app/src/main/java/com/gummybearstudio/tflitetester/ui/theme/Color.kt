@@ -1,4 +1,4 @@
-package com.gummybearstudio.infapp.ui.theme
+package com.gummybearstudio.tflitetester.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

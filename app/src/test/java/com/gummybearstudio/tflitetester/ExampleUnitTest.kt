@@ -1,4 +1,4 @@
-package com.gummybearstudio.infapp
+package com.gummybearstudio.tflitetester
 
 import org.junit.Test
 

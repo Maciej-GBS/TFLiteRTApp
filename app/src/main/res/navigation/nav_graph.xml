@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/permissions_view"
-        android:name="com.gummybearstudio.infapp.fragments.PermissionsFragment"
+        android:name="com.gummybearstudio.tflitetester.fragments.PermissionsFragment"
         android:label="PermissionsFragment">
 
         <action
@@ -19,7 +19,7 @@
 
     <fragment
         android:id="@+id/loader_view"
-        android:name="com.gummybearstudio.infapp.fragments.LoaderFragment"
+        android:name="com.gummybearstudio.tflitetester.fragments.LoaderFragment"
         android:label="LoaderFragment">
 
         <action
@@ -32,7 +32,7 @@
 
     <fragment
         android:id="@+id/camera_view"
-        android:name="com.gummybearstudio.infapp.fragments.CameraFragment"
+        android:name="com.gummybearstudio.tflitetester.fragments.CameraFragment"
         android:label="CameraFragment">
 
         <action

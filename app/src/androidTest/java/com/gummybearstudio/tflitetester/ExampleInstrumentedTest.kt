@@ -1,11 +1,11 @@
-package com.gummybearstudio.infapp
+package com.gummybearstudio.tflitetester
 
 import android.graphics.Bitmap
 import android.util.Log
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.gummybearstudio.infapp.backend.ObjectDetectionHandler
-import com.gummybearstudio.infapp.backend.OutputInterpreter
+import com.gummybearstudio.tflitetester.backend.ObjectDetectionHandler
+import com.gummybearstudio.tflitetester.backend.OutputInterpreter
 import kotlin.random.Random
 
 import org.junit.Test
@@ -24,7 +24,7 @@ class ExampleInstrumentedTest {
     fun useAppContext() {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        assertEquals("com.gummybearstudio.infapp", appContext.packageName)
+        assertEquals("com.gummybearstudio.tflitetester", appContext.packageName)
     }
 
     @Test

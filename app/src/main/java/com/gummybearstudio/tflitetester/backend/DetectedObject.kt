@@ -1,4 +1,4 @@
-package com.gummybearstudio.infapp.backend
+package com.gummybearstudio.tflitetester.backend
 
 class DetectedObject(detectionBox: SuperpixelBox,
                      detectionScore: Float,

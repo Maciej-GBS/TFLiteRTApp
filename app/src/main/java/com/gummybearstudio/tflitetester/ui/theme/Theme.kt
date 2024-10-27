@@ -1,4 +1,4 @@
-package com.gummybearstudio.infapp.ui.theme
+package com.gummybearstudio.tflitetester.ui.theme
 
 import android.app.Activity
 import android.os.Build

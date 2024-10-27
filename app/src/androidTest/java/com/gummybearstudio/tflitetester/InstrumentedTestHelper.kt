@@ -1,4 +1,4 @@
-package com.gummybearstudio.infapp
+package com.gummybearstudio.tflitetester
 
 import android.content.Context
 import java.io.File

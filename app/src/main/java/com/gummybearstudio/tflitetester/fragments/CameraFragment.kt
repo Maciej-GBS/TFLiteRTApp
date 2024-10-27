@@ -1,4 +1,4 @@
-package com.gummybearstudio.infapp.fragments
+package com.gummybearstudio.tflitetester.fragments
 
 import android.content.res.Configuration
 import android.graphics.Bitmap
@@ -16,11 +16,11 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import androidx.core.content.ContextCompat
-import com.gummybearstudio.infapp.R
-import com.gummybearstudio.infapp.databinding.CameraScreenBinding
-import com.gummybearstudio.infapp.backend.DetectedObject
-import com.gummybearstudio.infapp.backend.ModelFileProvider
-import com.gummybearstudio.infapp.backend.ObjectDetectionHandler
+import com.gummybearstudio.tflitetester.R
+import com.gummybearstudio.tflitetester.databinding.CameraScreenBinding
+import com.gummybearstudio.tflitetester.backend.DetectedObject
+import com.gummybearstudio.tflitetester.backend.ModelFileProvider
+import com.gummybearstudio.tflitetester.backend.ObjectDetectionHandler
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 

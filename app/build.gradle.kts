@@ -5,15 +5,15 @@ plugins {
 }
 
 android {
-    namespace = "com.gummybearstudio.infapp"
+    namespace = "com.gummybearstudio.tflitetester"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.gummybearstudio.infapp"
+        applicationId = "com.gummybearstudio.tflitetester"
         minSdk = 29
         targetSdk = 34
-        versionCode = 3
-        versionName = "1.2"
+        versionCode = 1
+        versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {

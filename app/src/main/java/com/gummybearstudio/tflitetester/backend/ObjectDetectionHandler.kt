@@ -1,4 +1,4 @@
-package com.gummybearstudio.infapp.backend
+package com.gummybearstudio.tflitetester.backend
 
 import android.graphics.Bitmap
 import android.util.Log

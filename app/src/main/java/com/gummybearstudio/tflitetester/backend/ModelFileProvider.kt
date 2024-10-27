@@ -1,4 +1,4 @@
-package com.gummybearstudio.infapp.backend
+package com.gummybearstudio.tflitetester.backend
 
 import android.app.Activity
 import android.content.ContentResolver
@@ -10,7 +10,7 @@ import android.app.AlertDialog
 import android.content.Context
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import com.gummybearstudio.infapp.R
+import com.gummybearstudio.tflitetester.R
 import java.io.File
 import java.nio.MappedByteBuffer
 import java.nio.channels.FileChannel

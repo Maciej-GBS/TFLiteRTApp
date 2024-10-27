@@ -1,4 +1,4 @@
-package com.gummybearstudio.infapp.fragments
+package com.gummybearstudio.tflitetester.fragments
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -6,8 +6,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.Navigation
-import com.gummybearstudio.infapp.R
-import com.gummybearstudio.infapp.backend.ModelFileProvider
+import com.gummybearstudio.tflitetester.R
+import com.gummybearstudio.tflitetester.backend.ModelFileProvider
 import kotlinx.coroutines.launch
 
 class LoaderFragment : Fragment() {

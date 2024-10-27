@@ -1,4 +1,4 @@
-package com.gummybearstudio.infapp.fragments
+package com.gummybearstudio.tflitetester.fragments
 
 import android.content.Context
 import android.graphics.Canvas
@@ -9,8 +9,8 @@ import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.View
 import androidx.core.content.ContextCompat
-import com.gummybearstudio.infapp.R
-import com.gummybearstudio.infapp.backend.DetectedObject
+import com.gummybearstudio.tflitetester.R
+import com.gummybearstudio.tflitetester.backend.DetectedObject
 
 class OverlayView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 

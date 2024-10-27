@@ -1,9 +1,9 @@
-package com.gummybearstudio.infapp
+package com.gummybearstudio.tflitetester
 
 import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.gummybearstudio.infapp.databinding.RootActivityBinding
+import com.gummybearstudio.tflitetester.databinding.RootActivityBinding
 
 class MainActivity : AppCompatActivity() {
     private lateinit var activityMainBinding: RootActivityBinding

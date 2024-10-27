@@ -1,4 +1,4 @@
-package com.gummybearstudio.infapp.fragments
+package com.gummybearstudio.tflitetester.fragments
 
 import android.Manifest
 import android.content.Context
@@ -12,7 +12,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.Navigation
-import com.gummybearstudio.infapp.R
+import com.gummybearstudio.tflitetester.R
 import kotlinx.coroutines.launch
 
 class PermissionsFragment : Fragment() {
